@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Story</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #0c0d12;
+      --text: #ffffff;
+      --muted: #9a9aa3;
+      --surface: #1c1d26;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, sans-serif;
+      line-height: 1.7;
+    }
+
+    .page {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 1.25rem;
+    }
+
+    .back {
+      display: inline-block;
+      margin-bottom: 1rem;
+      font-size: 1.4rem;
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    .story {
+      font-size: 1.05rem;
+      white-space: pre-line;
+    }
+
+    .word {
+      cursor: pointer;
+      transition: background 0.15s ease, transform 0.1s ease;
+    }
+
+    .word:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 4px;
+    }
+
+    .word:active {
+      transform: scale(0.95);
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* ---------- BOTTOM SHEET ---------- */
+    .sheet {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--surface);
+      border-top-left-radius: 1.6rem;
+      border-top-right-radius: 1.6rem;
+      padding: 0.75rem 1.25rem 1.25rem;
+
+      min-height: 50vh;
+      max-height: 90vh;
+      overflow-y: auto;
+
+      transform: translateY(100%);
+      transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+      z-index: 1000;
+    }
+
+    .sheet.show {
+      transform: translateY(0);
+    }
+
+    .sheet-handle {
+      width: 44px;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.35);
+      border-radius: 999px;
+      margin: 0 auto 1rem;
+    }
+
+    .sheet-word {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .sheet-desc {
+      font-size: 1rem;
+      color: var(--muted);
+      line-height: 1.6;
+      word-break: break-word;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <a href="book-a1-1.html" class="back">&lt;</a>
+
+    <div id="story" class="story">
+Ben je ooit op een familierit met de auto geweest die níét chaotisch was?
+Waarschijnlijk niet.
+In ieder geval niet bij mijn familie.
+
+Elk jaar herhaalt zich hetzelfde tafereel. Geschreeuw. Paniek. Iemand vergeet steevast iets essentieels. Geld. Telefoons. Eén keer zelfs mijn oma. Dat ontdekten we pas na een uur rijden.
+
+Maar dit jaar zou anders worden.
+Dit jaar was ik voorbereid.
+
+Ik stond vier uur eerder op dan de rest van het gezin.
+Ik stelde een checklist op. Daarna maakte ik een tweede checklist om de eerste te controleren. Voor de zekerheid.
+
+Even kijken.
+
+Mijn favoriete zomerkleding: check
+Zonnebrandcrème die officieel al twee jaar over de datum is: check
+Een tablet gevuld met boeken en spelletjes: check
+Snacks (strikt vertrouwelijk): check
+
+Alles was geregeld.
+
+Ik keek op mijn horloge. Nog drie minuten over. Net gehaald.
+Ik pakte mijn koffer en nam alvast plaats in de auto, dit keer bij het raam.
+
+Ik wachtte. Drie, twee, één.
+
+“IEDEREEN NU OPSTAAN!”
+
+Dat was de stem van mijn moeder. Zelfs de buren werden er ongetwijfeld wakker van.
+Lichten floepten aan. Deuren zwaaiden open. Mijn zus riep dat ze al wakker was (wat overduidelijk niet zo was).
+Mijn vader vroeg waar zijn portemonnee lag, terwijl hij die al vasthield.
+Iemand zocht wanhopig naar zijn schoenen, die hij al aan had.
+
+Ik keek opnieuw naar mijn checklist.
+
+Familie: niet klaar  
+Vertrektijd: volledig onduidelijk  
+Mijn geduld: al opgebruikt  
+
+Ik leunde achterover en staarde naar de lucht.
+We waren nog niet eens vertrokken, en ik was al uitgeput.
+
+Maar ach.
+Ik had tenminste snacks.
+    </div>
+  </div>
+
+  <!-- BOTTOM SHEET -->
+  <div class="sheet" id="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-word" id="sheetWord"></div>
+    <div class="sheet-desc" id="sheetDesc"></div>
+  </div>
+
+  <script>
+    const explanations = {
+      "familierit": "Een lange autorit met je familie, vaak rumoerig en chaotisch.",
+      "chaotisch": "Onrustig en zonder duidelijke structuur.",
+      "voorbereid": "Klaar voor wat gaat komen.",
+      "checklist": "Een lijst om te controleren of alles klaar is.",
+      "uitgeput": "Heel moe, met weinig energie."
+    };
+
+    const storyEl = document.getElementById("story");
+    const sheet = document.getElementById("sheet");
+    const sheetWord = document.getElementById("sheetWord");
+    const sheetDesc = document.getElementById("sheetDesc");
+
+    const text = storyEl.innerText;
+    const words = text.split(/(\s+)/);
+
+    storyEl.innerHTML = words
+      .map(word => {
+        if (word.trim() === "") return word;
+        return `<span class="word" onclick="openSheet('${word.replace(/'/g, "\\'")}')">${word}</span>`;
+      })
+      .join("");
+
+    function openSheet(word) {
+      const cleanWord = word
+        .toLowerCase()
+        .replace(/[.,!?()"“”]/g, "");
+
+      sheetWord.textContent = cleanWord;
+      sheetDesc.textContent =
+        explanations[cleanWord] || "Nog geen uitleg voor dit woord.";
+
+      sheet.classList.add("show");
+    }
+
+    document.addEventListener("click", e => {
+      if (
+        sheet.classList.contains("show") &&
+        !sheet.contains(e.target) &&
+        !e.target.classList.contains("word")
+      ) {
+        sheet.classList.remove("show");
+      }
+    });
+
+    let startY = 0;
+
+    sheet.addEventListener("touchstart", e => {
+      startY = e.touches[0].clientY;
+    });
+
+    sheet.addEventListener("touchmove", e => {
+      const diff = e.touches[0].clientY - startY;
+      if (diff > 0) {
+        sheet.style.transform = `translateY(${diff}px)`;
+      }
+    });
+
+    sheet.addEventListener("touchend", e => {
+      const diff = e.changedTouches[0].clientY - startY;
+      if (diff > 80) {
+        sheet.classList.remove("show");
+      }
+      sheet.style.transform = "";
+    });
+  </script>
+</body>
+</html>

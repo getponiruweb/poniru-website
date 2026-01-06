@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Book App Prototype</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #0c0d12;
+      --surface: #15161c;
+      --surface-soft: #1c1d26;
+      --muted: #3b3d4a;
+      --accent: #7f86ff;
+      --text: #ffffff;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+
+    /* ---------- SIDEBAR ---------- */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 240px;
+      background: #0f111a;
+      padding: 1.5rem 1rem;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .sidebar-title {
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      color: #8a8fa8;
+      margin-bottom: 0.75rem;
+    }
+
+    .sidebar-section {
+      margin-bottom: 1.5rem;
+    }
+
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.6rem;
+      border-radius: 0.6rem;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.95rem;
+      opacity: 0.85;
+    }
+
+    .sidebar-item:hover {
+      background: rgba(255,255,255,0.06);
+      opacity: 1;
+    }
+
+    .sidebar-item.active {
+      background: rgba(127,134,255,0.18);
+      color: var(--accent);
+      opacity: 1;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+    }
+
+    /* ---------- APP ---------- */
+    .app {
+      max-width: 1200px;
+      margin-left: 240px;
+      padding: 1rem;
+      padding-bottom: 5rem;
+    }
+
+    /* ---------- HEADER ---------- */
+    .header {
+      height: 3.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 420px;
+      margin: 0 auto;
+    }
+
+    .icon {
+      width: 1.4rem;
+      height: 1.4rem;
+      background: var(--surface);
+      border-radius: 0.4rem;
+    }
+
+    /* ---------- HERO ---------- */
+    .hero {
+      max-width: 900px;
+      height: clamp(12rem, 22vw, 17rem);
+      background: var(--surface);
+      border-radius: 1rem;
+      margin: 1rem auto 0.75rem;
+    }
+
+    /* ---------- LEVEL PILLS ---------- */
+    .levels {
+      display: flex;
+      gap: 0.75rem;
+      max-width: 900px;
+      margin: 0 auto 1.5rem;
+    }
+
+    .level {
+      background: transparent;
+      color: #ffffff;
+      border: 2px solid rgba(255,255,255,0.25);
+      padding: 0.55rem 1.4rem;
+      border-radius: 999px;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+
+    .level.active {
+      border-color: #ffffff;
+    }
+
+    /* ---------- GENRES ---------- */
+    .genre-section {
+      margin-bottom: 1.75rem;
+    }
+
+    .genre-title {
+      font-size: 0.95rem;
+      font-weight: 500;
+      margin: 0 0 0.6rem 0.25rem;
+    }
+
+    .book-row {
+      display: flex;
+      gap: 0.7rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .book-row::-webkit-scrollbar {
+      display: none;
+    }
+
+    .card {
+      min-width: 125px;
+      max-width: 125px;
+      flex-shrink: 0;
+    }
+
+    .card-img {
+      width: 100%;
+      aspect-ratio: 2 / 3;
+      background: var(--surface);
+      border-radius: 0.6rem;
+    }
+
+
+
+    /* ---------- BOTTOM NAV ---------- */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 420px;
+      height: 4.25rem;
+      background: var(--surface);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      border-top-left-radius: 1.3rem;
+      border-top-right-radius: 1.3rem;
+    }
+
+    .nav-item {
+      width: 1.4rem;
+      height: 1.4rem;
+      background: var(--muted);
+      border-radius: 0.35rem;
+      opacity: 0.5;
+    }
+
+    .nav-item.active {
+      background: var(--accent);
+      opacity: 1;
+      transform: translateY(-3px);
+    }
+
+    /* ---------- MOBILE ---------- */
+    @media (max-width: 1023px) {
+      .sidebar {
+        display: none;
+      }
+
+      .app {
+        margin-left: 0;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .bottom-nav {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-title">MENU</div>
+      <a class="sidebar-item active">Home</a>
+      <a class="sidebar-item">Discovery</a>
+      <a class="sidebar-item">Community</a>
+      <a class="sidebar-item" style="opacity:.4;">Coming Soon</a>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-title">LIBRARY</div>
+      <a class="sidebar-item">Recent</a>
+      <a class="sidebar-item">My Collection</a>
+      <a class="sidebar-item">Download</a>
+    </div>
+
+    <div class="sidebar-footer">
+      <a class="sidebar-item">Settings</a>
+      <a class="sidebar-item" style="opacity:.6;">Log out</a>
+    </div>
+  </aside>
+
+  <!-- APP -->
+  <div class="app">
+
+    <header class="header">
+      <div class="icon"></div>
+      <div class="icon"></div>
+    </header>
+
+    <section class="hero"></section>
+
+    <div class="levels">
+      <button class="level active">A1</button>
+      <button class="level">A2</button>
+      <button class="level">B1</button>
+      <button class="level">B2</button>
+    </div>
+
+   <!-- GENRE 1 -->
+<section class="genre-section">
+  <div class="genre-title">Book genre</div>
+
+  <div class="book-row">
+    <a href="book-a1-1.html" class="card-link">
+      <div class="card">
+        <img src="images/chaoticcar.jpg" class="card-img" alt="Book cover">
+        <div class="line title-line"></div>
+        <div class="line sub-line"></div>
+      </div>
+    </a>
+
+    <a href="book-a1-2.html" class="card-link">
+      <div class="card">
+        <div class="card-img"></div>
+        <div class="line title-line"></div>
+        <div class="line sub-line"></div>
+      </div>
+    </a>
+
+    <a href="book-a1-3.html" class="card-link">
+      <div class="card">
+        <div class="card-img"></div>
+        <div class="line title-line"></div>
+        <div class="line sub-line"></div>
+      </div>
+    </a>
+
+    <a href="book-a1-4.html" class="card-link">
+      <div class="card">
+        <div class="card-img"></div>
+        <div class="line title-line"></div>
+        <div class="line sub-line"></div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- GENRE 2 -->
+<section class="genre-section">
+  <div class="genre-title">Book genre</div>
+
+  <div class="book-row">
+    <a href="book.html" class="card-link">
+      <div class="card">
+        <div class="card-img"></div>
+        <div class="line title-line"></div>
+        <div class="line sub-line"></div>
+      </div>
+    </a>
+
+    <a href="book.html" class="card-link">
+      <div class="card">
+        <div class="card-img"></div>
+        <div class="line title-line"></div>
+        <div class="line sub-line"></div>
+      </div>
+    </a>
+
+    <a href="book.html" class="card-link">
+      <div class="card">
+        <div class="card-img"></div>
+        <div class="line title-line"></div>
+        <div class="line sub-line"></div>
+      </div>
+    </a>
+
+    <a href="book.html" class="card-link">
+      <div class="card">
+        <div class="card-img"></div>
+        <div class="line title-line"></div>
+        <div class="line sub-line"></div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- GENRE 3 -->
+<section class="genre-section">
+  <div class="genre-title">Book genre</div>
+
+  <div class="book-row">
+    <a href="book.html" class="card-link">
+      <div class="card">
+        <div class="card-img"></div>
+        <div class="line title-line"></div>
+        <div class="line sub-line"></div>
+      </div>
+    </a>
+
+    <a href="book.html" class="card-link">
+      <div class="card">
+        <div class="card-img"></div>
+        <div class="line title-line"></div>
+        <div class="line sub-line"></div>
+      </div>
+    </a>
+
+    <a href="book.html" class="card-link">
+      <div class="card">
+        <div class="card-img"></div>
+        <div class="line title-line"></div>
+        <div class="line sub-line"></div>
+      </div>
+    </a>
+
+    <a href="book.html" class="card-link">
+      <div class="card">
+        <div class="card-img"></div>
+        <div class="line title-line"></div>
+        <div class="line sub-line"></div>
+      </div>
+    </a>
+  </div>
+</section>
+
+  </div>
+
+  <nav class="bottom-nav">
+    <div class="nav-item"></div>
+    <div class="nav-item"></div>
+    <div class="nav-item active"></div>
+    <div class="nav-item"></div>
+    <div class="nav-item"></div>
+  </nav>
+
+</body>
+</html>
+
+
+
